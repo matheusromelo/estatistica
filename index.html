@@ -1,15 +1,19 @@
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulados Analytics Firebase</title>
+<title>Simulados Analytics</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- ================================= -->
+<!-- COLE APENAS ESSE CSS NO LUGAR DO SEU <style> -->
+<!-- NÃO ALTERA NENHUMA FUNÇÃO -->
+<!-- ================================= -->
 
 <style>
 
@@ -20,170 +24,965 @@
     font-family:'Inter',sans-serif;
 }
 
+html{
+    scroll-behavior:smooth;
+}
+
 body{
-    background:#020617;
+    background:
+    linear-gradient(180deg,#020617 0%,#050816 100%);
     color:white;
     min-height:100vh;
-    padding:30px;
+    overflow-x:hidden;
+    position:relative;
+}
+
+/* ================================= */
+/* FUNDO PREMIUM */
+/* ================================= */
+
+body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+
+    background:
+    linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
+
+    background-size:42px 42px;
+
+    opacity:.6;
+
+    z-index:-3;
+}
+
+body::after{
+    content:'';
+    position:fixed;
+    inset:0;
+
+    background:
+    radial-gradient(circle at top left,#2563eb33,transparent 25%),
+    radial-gradient(circle at bottom right,#00d26a33,transparent 25%),
+    radial-gradient(circle at center,#7c3aed22,transparent 20%);
+
+    z-index:-2;
+    animation:bgMove 14s ease-in-out infinite;
+}
+
+@keyframes bgMove{
+
+    0%{
+        transform:scale(1);
+    }
+
+    50%{
+        transform:scale(1.03);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+
+}
+
+button,input,textarea{
+    font-family:'Inter',sans-serif;
 }
 
 .hidden{
-    display:none;
+    display:none !important;
+}
+
+/* ================================= */
+/* BIBLIOTECA */
+/* ================================= */
+
+#bibliotecaPage{
+    padding:35px;
 }
 
 .topbar{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:30px;
-    gap:15px;
+    gap:20px;
+    margin-bottom:40px;
     flex-wrap:wrap;
 }
 
 .logo h1{
-    font-size:2.5rem;
+    font-size:3rem;
+    font-weight:900;
+    letter-spacing:-3px;
+
+    background:
+    linear-gradient(
+    90deg,
+    #ffffff,
+    #7dd3fc,
+    #3b82f6
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
 }
 
-.search,
-.input{
-    padding:14px;
-    border:none;
-    outline:none;
-    border-radius:14px;
-    background:#111827;
-    color:white;
+.logo p{
+    color:#94a3b8;
+    margin-top:10px;
+    font-size:1rem;
 }
+
+.top-actions{
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+/* ================================= */
+/* SEARCH */
+/* ================================= */
+
+.search{
+    width:320px;
+
+    padding:18px 22px;
+
+    border-radius:22px;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    outline:none;
+
+    background:
+    rgba(15,23,42,.72);
+
+    backdrop-filter:blur(16px);
+
+    color:white;
+
+    transition:.3s;
+
+    box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.03),
+    0 10px 30px rgba(0,0,0,.2);
+}
+
+.search:focus{
+    border-color:#3b82f6;
+
+    box-shadow:
+    0 0 0 4px rgba(59,130,246,.14),
+    0 10px 30px rgba(0,0,0,.3);
+}
+
+/* ================================= */
+/* BOTÕES */
+/* ================================= */
 
 .btn{
-    padding:14px 20px;
     border:none;
-    border-radius:14px;
     cursor:pointer;
+    transition:.35s;
     font-weight:700;
+    position:relative;
+    overflow:hidden;
+}
+
+.btn::before{
+    content:'';
+    position:absolute;
+    inset:0;
+
+    background:
+    linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,.18),
+    transparent
+    );
+
+    transform:translateX(-100%);
+    transition:.7s;
+}
+
+.btn:hover::before{
+    transform:translateX(100%);
+}
+
+.btn:hover{
+    transform:
+    translateY(-3px)
+    scale(1.01);
 }
 
 .btn-primary{
-    background:#2563eb;
+    padding:18px 24px;
+
+    border-radius:22px;
+
+    background:
+    linear-gradient(
+    135deg,
+    #2563eb,
+    #4f46e5
+    );
+
     color:white;
+
+    box-shadow:
+    0 12px 35px rgba(37,99,235,.35);
 }
 
-.cancel{
-    background:#1e293b;
-    color:white;
+/* ================================= */
+/* STATS */
+/* ================================= */
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:24px;
+    margin-bottom:35px;
 }
 
-.save{
-    background:#16a34a;
-    color:white;
+.stat-card{
+    background:
+    linear-gradient(
+    180deg,
+    rgba(15,23,42,.82),
+    rgba(8,20,39,.96)
+    );
+
+    border:1px solid rgba(255,255,255,.06);
+
+    padding:28px;
+
+    border-radius:32px;
+
+    backdrop-filter:blur(18px);
+
+    position:relative;
+    overflow:hidden;
+
+    transition:.35s;
+
+    box-shadow:
+    0 15px 45px rgba(0,0,0,.3),
+    inset 0 1px 0 rgba(255,255,255,.03);
 }
+
+.stat-card::before{
+    content:'';
+    position:absolute;
+
+    width:220px;
+    height:220px;
+
+    background:#2563eb22;
+
+    border-radius:50%;
+
+    top:-120px;
+    right:-120px;
+}
+
+.stat-card:hover{
+    transform:translateY(-6px);
+    border-color:#3b82f6;
+}
+
+.stat-card h3{
+    color:#cbd5e1;
+    font-size:.92rem;
+    margin-bottom:14px;
+}
+
+.stat-card strong{
+    font-size:2.8rem;
+    font-weight:900;
+    letter-spacing:-2px;
+}
+
+/* ================================= */
+/* BIBLIOTECA CARDS */
+/* ================================= */
 
 .library{
     display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
-    gap:20px;
+    grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+    gap:24px;
 }
 
 .simulado-card{
-    background:#111827;
-    padding:25px;
-    border-radius:24px;
+    background:
+    linear-gradient(
+    180deg,
+    rgba(15,23,42,.84),
+    rgba(8,20,39,.96)
+    );
+
+    border:1px solid rgba(255,255,255,.06);
+
+    border-radius:34px;
+
+    padding:28px;
+
+    transition:.4s;
+
     cursor:pointer;
+
+    position:relative;
+    overflow:hidden;
+
+    backdrop-filter:blur(18px);
+
+    box-shadow:
+    0 15px 35px rgba(0,0,0,.28),
+    inset 0 1px 0 rgba(255,255,255,.03);
 }
 
-.percent{
-    font-size:2.5rem;
-    font-weight:900;
-    margin:15px 0;
+.simulado-card::before{
+    content:'';
+    position:absolute;
+
+    width:260px;
+    height:260px;
+
+    border-radius:50%;
+
+    background:#2563eb20;
+
+    top:-140px;
+    right:-140px;
+}
+
+.simulado-card::after{
+    content:'';
+    position:absolute;
+    inset:0;
+
+    background:
+    linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,.05),
+    transparent
+    );
+
+    opacity:0;
+    transition:.6s;
+}
+
+.simulado-card:hover::after{
+    opacity:1;
+}
+
+.simulado-card:hover{
+    transform:
+    translateY(-10px)
+    scale(1.01);
+
+    border-color:#3b82f6;
+
+    box-shadow:
+    0 25px 65px rgba(37,99,235,.18);
+}
+
+.simulado-card h2{
+    font-size:1.45rem;
+    margin-bottom:18px;
+    font-weight:800;
+}
+
+.tag{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+
+    background:#111c32;
+
+    border:1px solid rgba(255,255,255,.05);
+
+    color:#93c5fd;
+
+    padding:10px 14px;
+
+    border-radius:999px;
+
+    font-size:.8rem;
+
+    margin-bottom:22px;
 }
 
 .progress{
     width:100%;
-    height:10px;
-    background:#1e293b;
+    height:14px;
+
+    background:#071120;
+
     border-radius:999px;
+
     overflow:hidden;
+
+    margin:20px 0;
+
+    border:1px solid rgba(255,255,255,.04);
 }
 
 .progress-bar{
     height:100%;
-    background:#2563eb;
+    border-radius:999px;
+
+    background:
+    linear-gradient(
+    90deg,
+    #2563eb,
+    #00d26a
+    );
+
+    position:relative;
+}
+
+.progress-bar::after{
+    content:'';
+    position:absolute;
+    inset:0;
+
+    background:
+    linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,.28),
+    transparent
+    );
+
+    animation:shine 2.5s linear infinite;
+}
+
+@keyframes shine{
+
+    from{
+        transform:translateX(-100%);
+    }
+
+    to{
+        transform:translateX(100%);
+    }
+
 }
 
 .meta{
     display:flex;
     justify-content:space-between;
-    margin-top:15px;
+    color:#cbd5e1;
+    margin-top:18px;
+    font-weight:600;
 }
+
+.percent{
+    font-size:3rem;
+    font-weight:900;
+    letter-spacing:-3px;
+
+    background:
+    linear-gradient(
+    90deg,
+    #ffffff,
+    #60a5fa
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+/* ================================= */
+/* MODAL */
+/* ================================= */
 
 .modal{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.7);
+
+    background:rgba(0,0,0,.72);
+
     display:flex;
     justify-content:center;
     align-items:center;
+
+    padding:20px;
+
+    z-index:9999;
 }
 
 .modal-content{
-    background:#111827;
-    padding:30px;
-    border-radius:24px;
     width:100%;
-    max-width:450px;
+    max-width:520px;
+
+    background:
+    linear-gradient(
+    180deg,
+    rgba(15,23,42,.96),
+    rgba(8,20,39,.98)
+    );
+
+    border:1px solid rgba(255,255,255,.06);
+
+    border-radius:34px;
+
+    padding:34px;
+
+    backdrop-filter:blur(24px);
+
+    box-shadow:
+    0 30px 80px rgba(0,0,0,.45);
+}
+
+.modal-content h2{
+    margin-bottom:28px;
+    font-size:2rem;
 }
 
 .input-group{
-    margin-bottom:18px;
+    margin-bottom:22px;
 }
 
 .input-group label{
     display:block;
-    margin-bottom:8px;
+    margin-bottom:12px;
+    color:#cbd5e1;
+}
+
+.input{
+    width:100%;
+    padding:18px 20px;
+
+    border:none;
+    outline:none;
+
+    background:#071120;
+
+    border:1px solid rgba(255,255,255,.05);
+
+    border-radius:20px;
+
+    color:white;
+
+    transition:.3s;
+}
+
+.input:focus{
+    border-color:#3b82f6;
+
+    box-shadow:
+    0 0 0 4px rgba(59,130,246,.12);
 }
 
 .modal-buttons{
     display:flex;
-    gap:10px;
+    gap:15px;
+    margin-top:28px;
 }
 
-.dashboard-card{
+.cancel{
+    flex:1;
+    padding:16px;
+
+    border-radius:18px;
+
+    background:#1e293b;
+
+    color:white;
+}
+
+.save{
+    flex:1;
+    padding:16px;
+
+    border-radius:18px;
+
+    background:
+    linear-gradient(
+    135deg,
+    #2563eb,
+    #4f46e5
+    );
+
+    color:white;
+}
+
+/* ================================= */
+/* DASHBOARD */
+/* ================================= */
+
+#dashboardPage{
+    padding:35px;
+}
+
+.back-btn{
+    padding:15px 18px;
+
+    border-radius:18px;
+
     background:#111827;
-    padding:25px;
+
+    color:white;
+
+    margin-bottom:25px;
+}
+
+.dashboard-grid{
+    display:grid;
+    grid-template-columns:1.1fr .9fr;
+    gap:28px;
+}
+
+.card{
+    background:
+    linear-gradient(
+    180deg,
+    rgba(15,23,42,.84),
+    rgba(8,20,39,.96)
+    );
+
+    border:1px solid rgba(255,255,255,.06);
+
+    border-radius:32px;
+
+    padding:22px;
+
+    backdrop-filter:blur(18px);
+
+    box-shadow:
+    0 15px 40px rgba(0,0,0,.28),
+    inset 0 1px 0 rgba(255,255,255,.03);
+
+    transition:.35s;
+}
+
+.card:hover{
+    border-color:#2563eb55;
+}
+
+.chart-container{
+    position:relative;
+    height:420px;
+}
+
+.center-data{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    text-align:center;
+}
+
+.center-data h1{
+    font-size:4rem;
+    font-weight:900;
+}
+
+.center-data p{
+    color:#94a3b8;
+}
+
+.inputs{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.input-box{
+    background:#071120;
+
+    border:1px solid rgba(255,255,255,.06);
+
     border-radius:24px;
-    margin-top:20px;
+
+    padding:20px;
+
+    transition:.3s;
+}
+
+.input-box:focus-within{
+    border-color:#3b82f6;
+
+    box-shadow:
+    0 0 0 4px rgba(59,130,246,.12);
+}
+
+.input-box label{
+    display:block;
+    margin-bottom:12px;
+    color:#cbd5e1;
+}
+
+.input-box input{
+    width:100%;
+    border:none;
+    outline:none;
+    background:none;
+    color:white;
+    font-size:2.5rem;
+    font-weight:900;
+    letter-spacing:-2px;
 }
 
 .stats{
     display:grid;
     grid-template-columns:repeat(2,1fr);
-    gap:15px;
+    gap:18px;
     margin-top:20px;
 }
 
 .stat{
-    background:#1e293b;
     padding:20px;
-    border-radius:18px;
+    border-radius:24px;
+    position:relative;
+    overflow:hidden;
+    min-height:125px;
+
+    box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 10px 25px rgba(0,0,0,.18);
 }
 
-textarea{
+.green{
+    background:linear-gradient(135deg,#00c96b,#2ce27d);
+}
+
+.red{
+    background:linear-gradient(135deg,#ff3b5c,#ff667d);
+}
+
+.blue{
+    background:linear-gradient(135deg,#2d6bff,#5f8fff);
+}
+
+.purple{
+    background:linear-gradient(135deg,#8b3dff,#b066ff);
+}
+
+.stat h3{
+    margin-bottom:10px;
+    font-size:.85rem;
+}
+
+.stat strong{
+    font-size:2.8rem;
+    font-weight:900;
+    letter-spacing:-2px;
+}
+
+.bottom-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:28px;
+    margin-top:28px;
+}
+
+.progress-line{
     width:100%;
-    height:150px;
-    background:#0f172a;
-    border:none;
-    border-radius:14px;
-    padding:15px;
-    color:white;
+    height:14px;
+    background:#071120;
+    border-radius:999px;
+    overflow:hidden;
     margin-top:20px;
 }
 
-canvas{
-    margin-top:20px;
+.progress-fill{
+    height:100%;
+    width:0%;
+
+    border-radius:999px;
+
+    background:
+    linear-gradient(
+    90deg,
+    #2d6bff,
+    #00d26a
+    );
+
+    transition:1s;
+}
+
+.empty{
+    text-align:center;
+    color:#94a3b8;
+    padding:80px 20px;
+}
+
+/* ================================= */
+/* CONTEÚDOS */
+/* ================================= */
+
+.content-table{
+    width:100%;
+    overflow:auto;
+}
+
+.table-header,
+.table-row{
+    display:grid;
+    grid-template-columns:2fr 1.2fr 1fr 1.2fr;
+    gap:14px;
+    align-items:center;
+    padding:16px 12px;
+    min-width:700px;
+}
+
+.table-header{
+    color:#94a3b8;
+    font-size:.9rem;
+    border-bottom:1px solid rgba(255,255,255,.06);
+    margin-bottom:8px;
+}
+
+.table-row{
+    border-radius:18px;
+    transition:.25s;
+}
+
+.table-row:hover{
+    background:rgba(255,255,255,.03);
+    transform:translateX(3px);
+}
+
+.content-name{
+    font-weight:600;
+}
+
+.badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    width:max-content;
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:.82rem;
+    font-weight:700;
+}
+
+.badge::before{
+    content:'';
+    width:8px;
+    height:8px;
+    border-radius:50%;
+}
+
+.bio{
+    background:#16351f;
+    color:#7fffb0;
+}
+
+.math{
+    background:#132742;
+    color:#8fc5ff;
+}
+
+.geo{
+    background:#3b2618;
+    color:#ffbf8b;
+}
+
+.quim{
+    background:#40203c;
+    color:#ff9ce7;
+}
+
+.alta{
+    background:#3d171d;
+    color:#ff9cab;
+}
+
+.alta::before{
+    background:#ff4d67;
+}
+
+.media{
+    background:#473613;
+    color:#ffd36e;
+}
+
+.media::before{
+    background:#fbbf24;
+}
+
+.baixa{
+    background:#163524;
+    color:#86efac;
+}
+
+.baixa::before{
+    background:#22c55e;
+}
+
+.freq-alta{
+    background:#232323;
+    color:#f3f4f6;
+}
+
+.freq-media{
+    background:#36332c;
+    color:#fcd34d;
+}
+
+.freq-baixa{
+    background:#3b2c24;
+    color:#fdba74;
+}
+
+/* ================================= */
+/* RESPONSIVO */
+/* ================================= */
+
+@media(max-width:1100px){
+
+    .dashboard-grid,
+    .bottom-grid,
+    .stats-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:700px){
+
+    #bibliotecaPage,
+    #dashboardPage{
+        padding:18px;
+    }
+
+    .library{
+        grid-template-columns:1fr;
+    }
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .logo h1{
+        font-size:2.1rem;
+    }
+
+    .search{
+        width:100%;
+    }
+
+    .percent{
+        font-size:2.5rem;
+    }
+
 }
 
 </style>
 </head>
 <body>
+
+<!-- ================================= -->
+<!-- BIBLIOTECA -->
+<!-- ================================= -->
 
 <div id="bibliotecaPage">
 
@@ -191,22 +990,47 @@ canvas{
 
         <div class="logo">
             <h1>Simulados Analytics</h1>
+            <p>Sua biblioteca inteligente de simulados</p>
         </div>
 
-        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <div class="top-actions">
 
             <input
             class="search"
             id="searchInput"
-            placeholder="Pesquisar..."
+            placeholder="Pesquisar simulados..."
             oninput="renderBiblioteca()">
 
             <button
             class="btn btn-primary"
             onclick="openModal()">
-                + Novo
+                + Novo Simulado
             </button>
 
+        </div>
+
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <h3>Desempenho Geral</h3>
+            <strong id="desempenhoGeral">0%</strong>
+        </div>
+
+        <div class="stat-card">
+            <h3>Total de Simulados</h3>
+            <strong id="totalSimulados">0</strong>
+        </div>
+
+        <div class="stat-card">
+            <h3>Total de Questões</h3>
+            <strong id="totalQuestoes">0</strong>
+        </div>
+
+        <div class="stat-card">
+            <h3>Média Geral</h3>
+            <strong id="mediaGeral">0%</strong>
         </div>
 
     </div>
@@ -215,11 +1039,15 @@ canvas{
 
 </div>
 
-<div class="modal hidden" id="modal">
+<!-- ================================= -->
+<!-- MODAL -->
+<!-- ================================= -->
+
+<div class="modal hidden" id="modal" style="display:none;backdrop-filter:blur(8px);">
 
     <div class="modal-content">
 
-        <h2 style="margin-bottom:20px;">Novo Simulado</h2>
+        <h2>Novo Simulado</h2>
 
         <div class="input-group">
             <label>Nome</label>
@@ -256,72 +1084,163 @@ canvas{
 
 </div>
 
+<!-- ================================= -->
+<!-- DASHBOARD -->
+<!-- ================================= -->
+
 <div id="dashboardPage" class="hidden">
 
     <button
-    class="btn cancel"
+    class="btn back-btn"
     onclick="voltarBiblioteca()">
-        ← Voltar
+        ← Voltar para biblioteca
     </button>
 
-    <div class="dashboard-card">
+    <div class="topbar">
 
-        <h1 id="dashboardTitle">Simulado</h1>
+        <div class="logo">
+            <h1 id="dashboardTitle">Simulado</h1>
+            <p>Dashboard individual do simulado</p>
+        </div>
 
-        <canvas id="donutChart"></canvas>
+    </div>
 
-        <div class="stats">
+    <div class="dashboard-grid">
 
-            <div class="stat">
-                <h3>Acertos</h3>
-                <strong id="dashboardAcertosText">0</strong>
-            </div>
+        <div class="card">
 
-            <div class="stat">
-                <h3>Erros</h3>
-                <strong id="dashboardErrosText">0</strong>
+            <div class="chart-container">
+
+                <canvas id="donutChart"></canvas>
+
+                <div class="center-data">
+                    <h1 id="dashboardTotal">0</h1>
+                    <p>questões</p>
+                </div>
+
             </div>
 
         </div>
 
-        <div style="margin-top:20px;display:flex;flex-direction:column;gap:15px;">
+        <div class="card">
 
-            <input
-            class="input"
-            type="number"
-            id="dashboardAcertos"
-            placeholder="Acertos">
+            <h2 style="font-size:1.5rem;font-weight:800;margin-bottom:18px;">
+                Inserir Dados
+            </h2>
 
-            <input
-            class="input"
-            type="number"
-            id="dashboardErros"
-            placeholder="Erros">
+            <div class="inputs">
+
+                <div class="input-box">
+                    <label>Questões Acertadas</label>
+                    <input type="number" id="dashboardAcertos">
+                </div>
+
+                <div class="input-box">
+                    <label>Questões Erradas</label>
+                    <input type="number" id="dashboardErros">
+                </div>
+
+                <div style="display:flex;gap:12px;flex-wrap:wrap;">
+
+                    <button
+                    class="btn btn-primary"
+                    onclick="salvarAlteracoes()">
+                        Salvar
+                    </button>
+
+                    <button
+                    class="btn cancel"
+                    onclick="editarSimulado(currentId)">
+                        Editar Nome
+                    </button>
+
+                    <button
+                    class="btn save"
+                    style="background:#ef4444;"
+                    onclick="excluirSimulado(currentId)">
+                        Excluir
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="stats">
+
+                <div class="stat green">
+                    <h3>Taxa de Acerto</h3>
+                    <strong id="dashboardTaxa">0%</strong>
+                </div>
+
+                <div class="stat red">
+                    <h3>Taxa de Erro</h3>
+                    <strong id="dashboardTaxaErro">0%</strong>
+                </div>
+
+                <div class="stat blue">
+                    <h3>Acertos</h3>
+                    <strong id="dashboardAcertosText">0</strong>
+                </div>
+
+                <div class="stat purple">
+                    <h3>Erros</h3>
+                    <strong id="dashboardErrosText">0</strong>
+                </div>
+
+            </div>
+
+            <div class="progress-line">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="bottom-grid">
+
+        <div class="card">
+            <h2 style="margin-bottom:16px;">Performance Linear</h2>
+            <canvas id="lineChart"></canvas>
+        </div>
+
+        <div class="card">
+            <h2 style="margin-bottom:16px;">Distribuição</h2>
+            <canvas id="polarChart"></canvas>
+        </div>
+
+    </div>
+
+    <div class="bottom-grid">
+
+        <div class="card">
+
+            <h2 style="margin-bottom:18px;">Comentários</h2>
 
             <textarea
             id="comentarios"
-            placeholder="Comentários"></textarea>
+            placeholder="Anotações..."
+            style="width:100%;height:180px;background:#071120;border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:18px;color:white;resize:none;outline:none;"></textarea>
 
-            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        </div>
 
-                <button
-                class="btn btn-primary"
-                onclick="salvarAlteracoes()">
-                    Salvar
-                </button>
+        <div class="card">
 
-                <button
-                class="btn cancel"
-                onclick="editarSimulado(currentId)">
-                    Editar Nome
-                </button>
+            <h2 style="margin-bottom:18px;">Prioridades de Estudo</h2>
 
-                <button
-                class="btn"
-                style="background:#dc2626;color:white;"
-                onclick="excluirSimulado(currentId)">
-                    Excluir
-                </button>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+
+                <div style="background:#071120;padding:16px;border-radius:18px;border-left:5px solid #ff3b5c;">
+                    🔴 Revisar conteúdos com maior erro
+                </div>
+
+                <div style="background:#071120;padding:16px;border-radius:18px;border-left:5px solid #f59e0b;">
+                    🟡 Melhorar velocidade de resolução
+                </div>
+
+                <div style="background:#071120;padding:16px;border-radius:18px;border-left:5px solid #22c55e;">
+                    🟢 Consolidar conteúdos dominados
+                </div>
 
             </div>
 
@@ -329,88 +1248,104 @@ canvas{
 
     </div>
 
+    <div class="bottom-grid">
+
+        <div class="card">
+            <h2 style="margin-bottom:16px;">Comparativo</h2>
+            <canvas id="barChart"></canvas>
+        </div>
+
+        <div class="card">
+            <h2 style="margin-bottom:16px;">Distribuição</h2>
+            <canvas id="radarChart"></canvas>
+        </div>
+
+    </div>
+
+    <!-- ================================= -->
+    <!-- CONTEÚDOS -->
+    <!-- ================================= -->
+
+    <div class="card" style="margin-top:28px;">
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+
+            <div>
+                <h2 style="font-size:1.4rem;font-weight:800;">
+                    Conteúdos Estratégicos
+                </h2>
+
+                <p style="color:#94a3b8;margin-top:6px;">
+                    Controle de prioridades e frequência
+                </p>
+            </div>
+
+            <button
+            class="btn btn-primary"
+            onclick="adicionarConteudo()">
+                + Adicionar Conteúdo
+            </button>
+
+        </div>
+
+        <div class="content-table">
+
+            <div class="table-header">
+                <div>Conteúdo</div>
+                <div>Matéria</div>
+                <div>Prioridade</div>
+                <div>Frequência</div>
+            </div>
+
+            <div id="conteudosList"></div>
+
+        </div>
+
+    </div>
+
 </div>
 
-<script type="module">
+<script>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+Chart.defaults.color = '#d1d5db';
+Chart.defaults.font.family = 'Inter';
 
-import {
-    getFirestore,
-    collection,
-    getDocs,
-    addDoc,
-    updateDoc,
-    deleteDoc,
-    doc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+let simulados =
+JSON.parse(localStorage.getItem('simuladosAnalytics')) || [];
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBxm6ENo7qiMKPCLwsCBHKTH37Wov5CNLI",
-  authDomain: "redacaorep.firebaseapp.com",
-  projectId: "redacaorep",
-  storageBucket: "redacaorep.firebasestorage.app",
-  messagingSenderId: "959438351648",
-  appId: "1:959438351648:web:71a265f297aeca0257bb45",
-  measurementId: "G-W93YNDN325"
-};
-
-const app = initializeApp(firebaseConfig);
-
-const db = getFirestore(app);
-
-let simulados = [];
 let currentId = null;
 
-window.currentId = currentId;
+/* ================================= */
+/* MODAL */
+/* ================================= */
 
-const donutChart =
-new Chart(document.getElementById('donutChart'),{
-    type:'doughnut',
-    data:{
-        labels:['Erros','Acertos'],
-        datasets:[{
-            data:[0,0],
-            backgroundColor:['#ef4444','#22c55e']
-        }]
+function openModal(){
+    const modal = document.getElementById('modal');
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+}
+
+function closeModal(){
+    const modal = document.getElementById('modal');
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
+}
+
+window.addEventListener('click',(e)=>{
+
+    const modal = document.getElementById('modal');
+
+    if(e.target === modal){
+        closeModal();
     }
+
 });
 
-async function carregarFirebase(){
+/* ================================= */
+/* CRIAR */
+/* ================================= */
 
-    const querySnapshot =
-    await getDocs(collection(db,'simulados'));
-
-    simulados = [];
-
-    querySnapshot.forEach((docItem)=>{
-
-        simulados.push({
-            firebaseId:docItem.id,
-            ...docItem.data()
-        });
-
-    });
-
-    renderBiblioteca();
-
-}
-
-window.openModal = function(){
-
-    document.getElementById('modal')
-    .classList.remove('hidden');
-
-}
-
-window.closeModal = function(){
-
-    document.getElementById('modal')
-    .classList.add('hidden');
-
-}
-
-window.criarSimulado = async function(){
+function criarSimulado(){
 
     const nome =
     document.getElementById('novoNome').value;
@@ -426,24 +1361,17 @@ window.criarSimulado = async function(){
         return;
     }
 
-    const novoSimulado = {
+    simulados.unshift({
         id:Date.now(),
         nome,
         acertos,
         erros,
         comentarios:'',
+        conteudos:[],
         data:new Date().toLocaleDateString('pt-BR')
-    };
+    });
 
-    const docRef =
-    await addDoc(
-        collection(db,'simulados'),
-        novoSimulado
-    );
-
-    novoSimulado.firebaseId = docRef.id;
-
-    simulados.unshift(novoSimulado);
+    salvarLocal();
 
     closeModal();
 
@@ -451,7 +1379,11 @@ window.criarSimulado = async function(){
 
 }
 
-window.renderBiblioteca = function(){
+/* ================================= */
+/* BIBLIOTECA */
+/* ================================= */
+
+function renderBiblioteca(){
 
     const library =
     document.getElementById('library');
@@ -462,58 +1394,112 @@ window.renderBiblioteca = function(){
     .toLowerCase();
 
     const filtrados =
-    simulados.filter(s=>
+    simulados.filter(s =>
         s.nome.toLowerCase().includes(search)
     );
 
-    library.innerHTML =
-    filtrados.map(simulado=>{
+    if(filtrados.length === 0){
 
-        const total =
-        simulado.acertos + simulado.erros;
-
-        const porcentagem =
-        total > 0
-        ? ((simulado.acertos/total)*100).toFixed(1)
-        : 0;
-
-        return `
-
-        <div
-        class="simulado-card"
-        onclick="abrirSimulado(${simulado.id})">
-
-            <small>${simulado.data}</small>
-
-            <h2 style="margin-top:10px;">
-                ${simulado.nome}
-            </h2>
-
-            <div class="percent">
-                ${porcentagem}%
-            </div>
-
-            <div class="progress">
-                <div
-                class="progress-bar"
-                style="width:${porcentagem}%">
-                </div>
-            </div>
-
-            <div class="meta">
-                <span>✅ ${simulado.acertos}</span>
-                <span>❌ ${simulado.erros}</span>
-            </div>
-
+        library.innerHTML = `
+        <div class="empty">
+            Nenhum simulado encontrado.
         </div>
-
         `;
 
-    }).join('');
+    }else{
+
+        library.innerHTML =
+        filtrados.map(simulado => {
+
+            const total =
+            simulado.acertos + simulado.erros;
+
+            const porcentagem =
+            total > 0
+            ? ((simulado.acertos/total)*100).toFixed(1)
+            : 0;
+
+            return `
+
+            <div
+            class="simulado-card"
+            onclick="abrirSimulado(${simulado.id})">
+
+                <div class="tag">
+                    ${simulado.data}
+                </div>
+
+                <h2>${simulado.nome}</h2>
+
+                <div class="percent">
+                    ${porcentagem}%
+                </div>
+
+                <div class="progress">
+                    <div
+                    class="progress-bar"
+                    style="width:${porcentagem}%">
+                    </div>
+                </div>
+
+                <div class="meta">
+                    <span>✅ ${simulado.acertos}</span>
+                    <span>❌ ${simulado.erros}</span>
+                </div>
+
+            </div>
+
+            `;
+
+        }).join('');
+
+    }
+
+    atualizarStatsBiblioteca();
 
 }
 
-window.abrirSimulado = function(id){
+/* ================================= */
+/* STATS */
+/* ================================= */
+
+function atualizarStatsBiblioteca(){
+
+    let totalAcertos = 0;
+    let totalErros = 0;
+
+    simulados.forEach(s => {
+        totalAcertos += s.acertos;
+        totalErros += s.erros;
+    });
+
+    const totalQuestoes =
+    totalAcertos + totalErros;
+
+    const media =
+    totalQuestoes > 0
+    ? ((totalAcertos/totalQuestoes)*100).toFixed(1)
+    : 0;
+
+    document.getElementById('totalSimulados')
+    .innerText = simulados.length;
+
+    document.getElementById('totalQuestoes')
+    .innerText = totalQuestoes;
+
+    document.getElementById('mediaGeral')
+    .innerText = media + '%';
+
+    document.getElementById('desempenhoGeral')
+    .innerText = media + '%';
+
+}
+
+/* ================================= */
+/* TROCA DE PÁGINA */
+/* ================================= */
+
+function abrirSimulado(id){
 
     currentId = id;
 
@@ -527,7 +1513,7 @@ window.abrirSimulado = function(id){
 
 }
 
-window.voltarBiblioteca = function(){
+function voltarBiblioteca(){
 
     document.getElementById('dashboardPage')
     .classList.add('hidden');
@@ -535,14 +1521,130 @@ window.voltarBiblioteca = function(){
     document.getElementById('bibliotecaPage')
     .classList.remove('hidden');
 
+    renderBiblioteca();
+
 }
+
+/* ================================= */
+/* CHARTS */
+/* ================================= */
+
+const donutChart =
+new Chart(document.getElementById('donutChart'),{
+    type:'doughnut',
+    data:{
+        labels:['Erros','Acertos'],
+        datasets:[{
+            data:[0,0],
+            backgroundColor:['#ff3b5c','#00d26a'],
+            borderWidth:0
+        }]
+    },
+    options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        cutout:'72%'
+    }
+});
+
+const barChart =
+new Chart(document.getElementById('barChart'),{
+    type:'bar',
+    data:{
+        labels:['Acertos','Erros'],
+        datasets:[{
+            data:[0,0],
+            borderRadius:14,
+            backgroundColor:['#00d26a','#ff3b5c']
+        }]
+    },
+    options:{
+        plugins:{
+            legend:{display:false}
+        }
+    }
+});
+
+const lineChart =
+new Chart(document.getElementById('lineChart'),{
+    type:'line',
+    data:{
+        labels:['Início','Meta 1','Meta 2','Meta 3','Atual'],
+        datasets:[{
+            data:[20,35,50,70,85],
+            borderColor:'#3b82f6',
+            backgroundColor:'rgba(59,130,246,.15)',
+            fill:true,
+            tension:.4
+        }]
+    },
+    options:{
+        plugins:{
+            legend:{display:false}
+        }
+    }
+});
+
+const polarChart =
+new Chart(document.getElementById('polarChart'),{
+    type:'polarArea',
+    data:{
+        labels:['Acertos','Erros','Consistência','Precisão'],
+        datasets:[{
+            data:[80,20,65,78],
+            backgroundColor:[
+                '#22c55e',
+                '#ff3b5c',
+                '#3b82f6',
+                '#a855f7'
+            ]
+        }]
+    }
+});
+
+const radarChart =
+new Chart(document.getElementById('radarChart'),{
+    type:'radar',
+    data:{
+        labels:[
+            'Precisão',
+            'Consistência',
+            'Eficiência',
+            'Velocidade',
+            'Performance'
+        ],
+        datasets:[{
+            data:[0,0,0,0,0],
+            fill:true,
+            backgroundColor:'rgba(59,130,246,.2)',
+            borderColor:'#3b82f6'
+        }]
+    }
+});
+
+/* ================================= */
+/* DASHBOARD */
+/* ================================= */
 
 function carregarDashboard(){
 
     const simulado =
-    simulados.find(s=>s.id===currentId);
+    simulados.find(s => s.id === currentId);
 
     if(!simulado) return;
+
+    const total =
+    simulado.acertos + simulado.erros;
+
+    const taxa =
+    total > 0
+    ? ((simulado.acertos/total)*100).toFixed(1)
+    : 0;
+
+    const taxaErro =
+    total > 0
+    ? ((simulado.erros/total)*100).toFixed(1)
+    : 0;
 
     document.getElementById('dashboardTitle')
     .innerText = simulado.nome;
@@ -553,11 +1655,23 @@ function carregarDashboard(){
     document.getElementById('dashboardErros')
     .value = simulado.erros;
 
+    document.getElementById('dashboardTotal')
+    .innerText = total;
+
+    document.getElementById('dashboardTaxa')
+    .innerText = taxa + '%';
+
+    document.getElementById('dashboardTaxaErro')
+    .innerText = taxaErro + '%';
+
     document.getElementById('dashboardAcertosText')
     .innerText = simulado.acertos;
 
     document.getElementById('dashboardErrosText')
     .innerText = simulado.erros;
+
+    document.getElementById('progressFill')
+    .style.width = taxa + '%';
 
     document.getElementById('comentarios')
     .value = simulado.comentarios || '';
@@ -569,12 +1683,35 @@ function carregarDashboard(){
 
     donutChart.update();
 
+    barChart.data.datasets[0].data = [
+        simulado.acertos,
+        simulado.erros
+    ];
+
+    barChart.update();
+
+    radarChart.data.datasets[0].data = [
+        taxa,
+        taxa * 0.9,
+        taxa * 0.8,
+        taxa * 0.7,
+        taxa
+    ];
+
+    radarChart.update();
+
+    renderConteudos();
+
 }
 
-window.salvarAlteracoes = async function(){
+/* ================================= */
+/* SALVAR */
+/* ================================= */
+
+function salvarAlteracoes(){
 
     const simulado =
-    simulados.find(s=>s.id===currentId);
+    simulados.find(s => s.id === currentId);
 
     if(!simulado) return;
 
@@ -587,66 +1724,217 @@ window.salvarAlteracoes = async function(){
     simulado.comentarios =
     document.getElementById('comentarios').value;
 
-    await updateDoc(
-        doc(db,'simulados',simulado.firebaseId),
-        simulado
-    );
+    salvarLocal();
 
     carregarDashboard();
 
-    renderBiblioteca();
+}
 
-    alert('Salvo com sucesso');
+function salvarLocal(){
+
+    localStorage.setItem(
+        'simuladosAnalytics',
+        JSON.stringify(simulados)
+    );
 
 }
 
-window.editarSimulado = async function(id){
+/* ================================= */
+/* EDITAR / EXCLUIR */
+/* ================================= */
+
+function editarSimulado(id){
 
     const simulado =
     simulados.find(s=>s.id===id);
 
     const novoNome =
-    prompt('Novo nome',simulado.nome);
+    prompt('Novo nome:',simulado.nome);
 
-    if(!novoNome) return;
+    if(novoNome){
 
-    simulado.nome = novoNome;
+        simulado.nome = novoNome;
 
-    await updateDoc(
-        doc(db,'simulados',simulado.firebaseId),
-        simulado
-    );
+        salvarLocal();
 
-    carregarDashboard();
+        carregarDashboard();
 
-    renderBiblioteca();
+        renderBiblioteca();
+
+    }
 
 }
 
-window.excluirSimulado = async function(id){
+function excluirSimulado(id){
+
+    if(confirm('Excluir simulado?')){
+
+        simulados =
+        simulados.filter(s=>s.id!==id);
+
+        salvarLocal();
+
+        voltarBiblioteca();
+
+    }
+
+}
+
+/* ================================= */
+/* CONTEÚDOS */
+/* ================================= */
+
+function getConteudos(){
 
     const simulado =
-    simulados.find(s=>s.id===id);
+    simulados.find(s => s.id === currentId);
 
-    if(!confirm('Excluir simulado?')) return;
+    if(!simulado.conteudos){
+        simulado.conteudos = [];
+    }
 
-    await deleteDoc(
-        doc(db,'simulados',simulado.firebaseId)
-    );
-
-    simulados =
-    simulados.filter(s=>s.id!==id);
-
-    voltarBiblioteca();
-
-    renderBiblioteca();
+    return simulado.conteudos;
 
 }
 
-carregarFirebase();
+function renderConteudos(){
+
+    const lista =
+    document.getElementById('conteudosList');
+
+    const conteudos =
+    getConteudos();
+
+    if(conteudos.length === 0){
+
+        lista.innerHTML = `
+        <div class="empty">
+            Nenhum conteúdo adicionado.
+        </div>
+        `;
+
+        return;
+
+    }
+
+    lista.innerHTML =
+    conteudos.map(c => `
+
+        <div class="table-row">
+
+            <div class="content-name">
+                ${c.nome}
+            </div>
+
+            <div>
+                <span class="badge ${c.materiaClass}">
+                    ${c.materia}
+                </span>
+            </div>
+
+            <div>
+                <span class="badge ${c.prioridadeClass}">
+                    ${c.prioridade}
+                </span>
+            </div>
+
+            <div>
+                <span class="badge ${c.freqClass}">
+                    ${c.frequencia}
+                </span>
+            </div>
+
+        </div>
+
+    `).join('');
+
+}
+
+function adicionarConteudo(){
+
+    const nome =
+    prompt('Nome do conteúdo');
+
+    if(!nome) return;
+
+    const materia =
+    prompt('Matéria');
+
+    if(!materia) return;
+
+    const prioridade =
+    prompt('Prioridade: Alta, Média ou Baixa');
+
+    const frequencia =
+    prompt('Frequência: Alta Frequência, Média Frequência ou Baixa Frequência');
+
+    const conteudos =
+    getConteudos();
+
+    conteudos.push({
+
+        nome,
+        materia,
+        prioridade,
+        frequencia,
+
+        materiaClass:
+        getMateriaClass(materia),
+
+        prioridadeClass:
+        getPrioridadeClass(prioridade),
+
+        freqClass:
+        getFreqClass(frequencia)
+
+    });
+
+    salvarLocal();
+
+    renderConteudos();
+
+}
+
+function getMateriaClass(materia){
+
+    materia = materia.toLowerCase();
+
+    if(materia.includes('bio')) return 'bio';
+    if(materia.includes('mat')) return 'math';
+    if(materia.includes('geo')) return 'geo';
+    if(materia.includes('qu')) return 'quim';
+
+    return 'math';
+
+}
+
+function getPrioridadeClass(prioridade){
+
+    prioridade = prioridade.toLowerCase();
+
+    if(prioridade.includes('alta')) return 'alta';
+    if(prioridade.includes('m')) return 'media';
+
+    return 'baixa';
+
+}
+
+function getFreqClass(freq){
+
+    freq = freq.toLowerCase();
+
+    if(freq.includes('alta')) return 'freq-alta';
+    if(freq.includes('m')) return 'freq-media';
+
+    return 'freq-baixa';
+
+}
+
+/* ================================= */
+
+renderBiblioteca();
 
 </script>
 
 </body>
 </html>
-```
