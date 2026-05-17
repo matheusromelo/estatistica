@@ -1,0 +1,652 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulados Analytics Firebase</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter',sans-serif;
+}
+
+body{
+    background:#020617;
+    color:white;
+    min-height:100vh;
+    padding:30px;
+}
+
+.hidden{
+    display:none;
+}
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+.logo h1{
+    font-size:2.5rem;
+}
+
+.search,
+.input{
+    padding:14px;
+    border:none;
+    outline:none;
+    border-radius:14px;
+    background:#111827;
+    color:white;
+}
+
+.btn{
+    padding:14px 20px;
+    border:none;
+    border-radius:14px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.btn-primary{
+    background:#2563eb;
+    color:white;
+}
+
+.cancel{
+    background:#1e293b;
+    color:white;
+}
+
+.save{
+    background:#16a34a;
+    color:white;
+}
+
+.library{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+    gap:20px;
+}
+
+.simulado-card{
+    background:#111827;
+    padding:25px;
+    border-radius:24px;
+    cursor:pointer;
+}
+
+.percent{
+    font-size:2.5rem;
+    font-weight:900;
+    margin:15px 0;
+}
+
+.progress{
+    width:100%;
+    height:10px;
+    background:#1e293b;
+    border-radius:999px;
+    overflow:hidden;
+}
+
+.progress-bar{
+    height:100%;
+    background:#2563eb;
+}
+
+.meta{
+    display:flex;
+    justify-content:space-between;
+    margin-top:15px;
+}
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.7);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.modal-content{
+    background:#111827;
+    padding:30px;
+    border-radius:24px;
+    width:100%;
+    max-width:450px;
+}
+
+.input-group{
+    margin-bottom:18px;
+}
+
+.input-group label{
+    display:block;
+    margin-bottom:8px;
+}
+
+.modal-buttons{
+    display:flex;
+    gap:10px;
+}
+
+.dashboard-card{
+    background:#111827;
+    padding:25px;
+    border-radius:24px;
+    margin-top:20px;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+    margin-top:20px;
+}
+
+.stat{
+    background:#1e293b;
+    padding:20px;
+    border-radius:18px;
+}
+
+textarea{
+    width:100%;
+    height:150px;
+    background:#0f172a;
+    border:none;
+    border-radius:14px;
+    padding:15px;
+    color:white;
+    margin-top:20px;
+}
+
+canvas{
+    margin-top:20px;
+}
+
+</style>
+</head>
+<body>
+
+<div id="bibliotecaPage">
+
+    <div class="topbar">
+
+        <div class="logo">
+            <h1>Simulados Analytics</h1>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+
+            <input
+            class="search"
+            id="searchInput"
+            placeholder="Pesquisar..."
+            oninput="renderBiblioteca()">
+
+            <button
+            class="btn btn-primary"
+            onclick="openModal()">
+                + Novo
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="library" id="library"></div>
+
+</div>
+
+<div class="modal hidden" id="modal">
+
+    <div class="modal-content">
+
+        <h2 style="margin-bottom:20px;">Novo Simulado</h2>
+
+        <div class="input-group">
+            <label>Nome</label>
+            <input class="input" id="novoNome">
+        </div>
+
+        <div class="input-group">
+            <label>Acertos</label>
+            <input class="input" type="number" id="novoAcertos" value="0">
+        </div>
+
+        <div class="input-group">
+            <label>Erros</label>
+            <input class="input" type="number" id="novoErros" value="0">
+        </div>
+
+        <div class="modal-buttons">
+
+            <button
+            class="btn cancel"
+            onclick="closeModal()">
+                Cancelar
+            </button>
+
+            <button
+            class="btn save"
+            onclick="criarSimulado()">
+                Criar
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div id="dashboardPage" class="hidden">
+
+    <button
+    class="btn cancel"
+    onclick="voltarBiblioteca()">
+        ← Voltar
+    </button>
+
+    <div class="dashboard-card">
+
+        <h1 id="dashboardTitle">Simulado</h1>
+
+        <canvas id="donutChart"></canvas>
+
+        <div class="stats">
+
+            <div class="stat">
+                <h3>Acertos</h3>
+                <strong id="dashboardAcertosText">0</strong>
+            </div>
+
+            <div class="stat">
+                <h3>Erros</h3>
+                <strong id="dashboardErrosText">0</strong>
+            </div>
+
+        </div>
+
+        <div style="margin-top:20px;display:flex;flex-direction:column;gap:15px;">
+
+            <input
+            class="input"
+            type="number"
+            id="dashboardAcertos"
+            placeholder="Acertos">
+
+            <input
+            class="input"
+            type="number"
+            id="dashboardErros"
+            placeholder="Erros">
+
+            <textarea
+            id="comentarios"
+            placeholder="Comentários"></textarea>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+
+                <button
+                class="btn btn-primary"
+                onclick="salvarAlteracoes()">
+                    Salvar
+                </button>
+
+                <button
+                class="btn cancel"
+                onclick="editarSimulado(currentId)">
+                    Editar Nome
+                </button>
+
+                <button
+                class="btn"
+                style="background:#dc2626;color:white;"
+                onclick="excluirSimulado(currentId)">
+                    Excluir
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+    getFirestore,
+    collection,
+    getDocs,
+    addDoc,
+    updateDoc,
+    deleteDoc,
+    doc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBxm6ENo7qiMKPCLwsCBHKTH37Wov5CNLI",
+  authDomain: "redacaorep.firebaseapp.com",
+  projectId: "redacaorep",
+  storageBucket: "redacaorep.firebasestorage.app",
+  messagingSenderId: "959438351648",
+  appId: "1:959438351648:web:71a265f297aeca0257bb45",
+  measurementId: "G-W93YNDN325"
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+let simulados = [];
+let currentId = null;
+
+window.currentId = currentId;
+
+const donutChart =
+new Chart(document.getElementById('donutChart'),{
+    type:'doughnut',
+    data:{
+        labels:['Erros','Acertos'],
+        datasets:[{
+            data:[0,0],
+            backgroundColor:['#ef4444','#22c55e']
+        }]
+    }
+});
+
+async function carregarFirebase(){
+
+    const querySnapshot =
+    await getDocs(collection(db,'simulados'));
+
+    simulados = [];
+
+    querySnapshot.forEach((docItem)=>{
+
+        simulados.push({
+            firebaseId:docItem.id,
+            ...docItem.data()
+        });
+
+    });
+
+    renderBiblioteca();
+
+}
+
+window.openModal = function(){
+
+    document.getElementById('modal')
+    .classList.remove('hidden');
+
+}
+
+window.closeModal = function(){
+
+    document.getElementById('modal')
+    .classList.add('hidden');
+
+}
+
+window.criarSimulado = async function(){
+
+    const nome =
+    document.getElementById('novoNome').value;
+
+    const acertos =
+    Number(document.getElementById('novoAcertos').value);
+
+    const erros =
+    Number(document.getElementById('novoErros').value);
+
+    if(!nome){
+        alert('Digite um nome');
+        return;
+    }
+
+    const novoSimulado = {
+        id:Date.now(),
+        nome,
+        acertos,
+        erros,
+        comentarios:'',
+        data:new Date().toLocaleDateString('pt-BR')
+    };
+
+    const docRef =
+    await addDoc(
+        collection(db,'simulados'),
+        novoSimulado
+    );
+
+    novoSimulado.firebaseId = docRef.id;
+
+    simulados.unshift(novoSimulado);
+
+    closeModal();
+
+    renderBiblioteca();
+
+}
+
+window.renderBiblioteca = function(){
+
+    const library =
+    document.getElementById('library');
+
+    const search =
+    document.getElementById('searchInput')
+    .value
+    .toLowerCase();
+
+    const filtrados =
+    simulados.filter(s=>
+        s.nome.toLowerCase().includes(search)
+    );
+
+    library.innerHTML =
+    filtrados.map(simulado=>{
+
+        const total =
+        simulado.acertos + simulado.erros;
+
+        const porcentagem =
+        total > 0
+        ? ((simulado.acertos/total)*100).toFixed(1)
+        : 0;
+
+        return `
+
+        <div
+        class="simulado-card"
+        onclick="abrirSimulado(${simulado.id})">
+
+            <small>${simulado.data}</small>
+
+            <h2 style="margin-top:10px;">
+                ${simulado.nome}
+            </h2>
+
+            <div class="percent">
+                ${porcentagem}%
+            </div>
+
+            <div class="progress">
+                <div
+                class="progress-bar"
+                style="width:${porcentagem}%">
+                </div>
+            </div>
+
+            <div class="meta">
+                <span>✅ ${simulado.acertos}</span>
+                <span>❌ ${simulado.erros}</span>
+            </div>
+
+        </div>
+
+        `;
+
+    }).join('');
+
+}
+
+window.abrirSimulado = function(id){
+
+    currentId = id;
+
+    document.getElementById('bibliotecaPage')
+    .classList.add('hidden');
+
+    document.getElementById('dashboardPage')
+    .classList.remove('hidden');
+
+    carregarDashboard();
+
+}
+
+window.voltarBiblioteca = function(){
+
+    document.getElementById('dashboardPage')
+    .classList.add('hidden');
+
+    document.getElementById('bibliotecaPage')
+    .classList.remove('hidden');
+
+}
+
+function carregarDashboard(){
+
+    const simulado =
+    simulados.find(s=>s.id===currentId);
+
+    if(!simulado) return;
+
+    document.getElementById('dashboardTitle')
+    .innerText = simulado.nome;
+
+    document.getElementById('dashboardAcertos')
+    .value = simulado.acertos;
+
+    document.getElementById('dashboardErros')
+    .value = simulado.erros;
+
+    document.getElementById('dashboardAcertosText')
+    .innerText = simulado.acertos;
+
+    document.getElementById('dashboardErrosText')
+    .innerText = simulado.erros;
+
+    document.getElementById('comentarios')
+    .value = simulado.comentarios || '';
+
+    donutChart.data.datasets[0].data = [
+        simulado.erros,
+        simulado.acertos
+    ];
+
+    donutChart.update();
+
+}
+
+window.salvarAlteracoes = async function(){
+
+    const simulado =
+    simulados.find(s=>s.id===currentId);
+
+    if(!simulado) return;
+
+    simulado.acertos =
+    Number(document.getElementById('dashboardAcertos').value);
+
+    simulado.erros =
+    Number(document.getElementById('dashboardErros').value);
+
+    simulado.comentarios =
+    document.getElementById('comentarios').value;
+
+    await updateDoc(
+        doc(db,'simulados',simulado.firebaseId),
+        simulado
+    );
+
+    carregarDashboard();
+
+    renderBiblioteca();
+
+    alert('Salvo com sucesso');
+
+}
+
+window.editarSimulado = async function(id){
+
+    const simulado =
+    simulados.find(s=>s.id===id);
+
+    const novoNome =
+    prompt('Novo nome',simulado.nome);
+
+    if(!novoNome) return;
+
+    simulado.nome = novoNome;
+
+    await updateDoc(
+        doc(db,'simulados',simulado.firebaseId),
+        simulado
+    );
+
+    carregarDashboard();
+
+    renderBiblioteca();
+
+}
+
+window.excluirSimulado = async function(id){
+
+    const simulado =
+    simulados.find(s=>s.id===id);
+
+    if(!confirm('Excluir simulado?')) return;
+
+    await deleteDoc(
+        doc(db,'simulados',simulado.firebaseId)
+    );
+
+    simulados =
+    simulados.filter(s=>s.id!==id);
+
+    voltarBiblioteca();
+
+    renderBiblioteca();
+
+}
+
+carregarFirebase();
+
+</script>
+
+</body>
+</html>
+```
